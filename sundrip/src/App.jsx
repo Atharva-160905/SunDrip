@@ -24,7 +24,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      axios.get('http://localhost:5000/api/cart', { 
+      axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/cart`, { 
         headers: { Authorization: `Bearer ${user.token}` } 
       })
       .then(res => {
@@ -44,7 +44,7 @@ function App() {
     const syncCart = async () => {
       if (user && isCartInitialized) {
         try {
-          await axios.post('http://localhost:5000/api/cart/sync', 
+          await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/cart/sync`, 
             { items }, 
             { headers: { Authorization: `Bearer ${user.token}` } }
           );

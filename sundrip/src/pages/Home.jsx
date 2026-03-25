@@ -107,7 +107,7 @@ const Trending = () => {
   React.useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/products?pageSize=100');
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/products?pageSize=100`);
         const formatted = data.products
           .map(p => ({
             ...p,

@@ -39,7 +39,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let url = 'http://localhost:5000/api/products?pageSize=100';
+        let url = `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/products?pageSize=100`;
         if (activeCategory !== 'all' && activeCategory !== 'trending') {
           url += `&category=${activeCategory}`;
         }

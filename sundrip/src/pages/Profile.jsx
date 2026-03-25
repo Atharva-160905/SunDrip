@@ -33,7 +33,7 @@ const Profile = () => {
       const fetchOrders = async () => {
         try {
           const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-          const { data } = await axios.get('http://localhost:5000/api/orders/myorders', config);
+          const { data } = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/orders/myorders`, config);
           setOrders(data);
         } catch (error) {
           console.error('Error fetching orders:', error);
@@ -62,7 +62,7 @@ const Profile = () => {
           Authorization: `Bearer ${userInfo.token}`,
         },
       };
-      const { data } = await axios.put('http://localhost:5000/api/users/profile', { name, email, password }, config);
+      const { data } = await axios.put(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/users/profile`, { name, email, password }, config);
       dispatch(setCredentials(data));
       setMessage('Profile updated successfully!');
       setPassword('');

@@ -70,7 +70,7 @@ const AdminProductModal = ({ isOpen, onClose, product, onSave }) => {
       // Assume the backend is running on http://localhost:5000 
       // The API base URL is usually http://localhost:5000/api
       // data.url contains the relative path e.g. /uploads/image-xxx.jpg
-      const imageUrl = `http://localhost:5000${data.url}`;
+      const imageUrl = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${data.url}`;
       
       setFormData(prev => ({
         ...prev,

@@ -48,7 +48,7 @@ const Checkout = () => {
     
     try {
       // 1. Create order on our backend to get Razorpay Order ID
-      const { data: razorpayOrder } = await axios.post('http://localhost:5000/api/payment/create', {
+      const { data: razorpayOrder } = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/payment/create`, {
         amount: grandTotal
       }, { headers: { Authorization: `Bearer ${user.token}` } });
 
@@ -63,14 +63,14 @@ const Checkout = () => {
         handler: async function (response) {
           try {
             // 3. Verify signature on backend
-            await axios.post('http://localhost:5000/api/payment/verify', {
+            await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/payment/verify`, {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             }, { headers: { Authorization: `Bearer ${user.token}` } });
 
             // 4. Save completed order into Database
-            const { data: orderData } = await axios.post('http://localhost:5000/api/orders', {
+            const { data: orderData } = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/orders`, {
               products: orderItems,
               address,
               totalPrice: grandTotal,
