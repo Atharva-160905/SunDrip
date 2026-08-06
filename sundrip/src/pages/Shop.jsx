@@ -39,7 +39,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let url = `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/products?pageSize=100`;
+        let url = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/products?pageSize=100`;
         if (activeCategory !== 'all' && activeCategory !== 'trending') {
           url += `&category=${activeCategory}`;
         }
@@ -270,7 +270,7 @@ const Shop = () => {
                             <p className="text-slate-500 dark:text-slate-400 text-xs mb-3 capitalize">{product.category}</p>
                           </div>
                           <div className="flex items-center justify-between mt-auto">
-                            <span className="font-display font-bold text-lg">${product.price.toFixed(2)}</span>
+                            <span className="font-display font-bold text-lg">₹{product.price.toFixed(2)}</span>
                             <Button 
                               size="icon" 
                               variant="primary" 

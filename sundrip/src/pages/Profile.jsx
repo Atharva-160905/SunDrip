@@ -33,7 +33,7 @@ const Profile = () => {
       const fetchOrders = async () => {
         try {
           const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-          const { data } = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/orders/myorders`, config);
+          const { data } = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/orders/myorders`, config);
           setOrders(data);
         } catch (error) {
           console.error('Error fetching orders:', error);
@@ -62,7 +62,7 @@ const Profile = () => {
           Authorization: `Bearer ${userInfo.token}`,
         },
       };
-      const { data } = await axios.put(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/users/profile`, { name, email, password }, config);
+      const { data } = await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/users/profile`, { name, email, password }, config);
       dispatch(setCredentials(data));
       setMessage('Profile updated successfully!');
       setPassword('');
@@ -256,7 +256,7 @@ const Profile = () => {
                       {/* Right Side: Status and Price */}
                       <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center border-t border-border md:border-0 pt-4 md:pt-0 gap-2 md:gap-1">
                         <p className="text-2xl font-display font-bold text-foreground order-2 md:order-1">
-                          ${order.totalPrice.toFixed(2)}
+                          ₹{order.totalPrice.toFixed(2)}
                         </p>
                         
                         <div className="flex space-x-2 order-1 md:order-2 md:mt-2">

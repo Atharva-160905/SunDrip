@@ -87,7 +87,7 @@ const Cart = () => {
                       <div className="flex flex-col justify-center">
                         <h3 className="font-semibold text-lg text-foreground line-clamp-2">{item.name}</h3>
                         <p className="text-slate-500 mt-1 capitalize">{item.color} | Size: {item.size}</p>
-                        <p className="md:hidden font-display font-bold text-primary-600 mt-2">${item.price.toFixed(2)}</p>
+                        <p className="md:hidden font-display font-bold text-primary-600 mt-2">₹{item.price.toFixed(2)}</p>
                       </div>
                     </div>
 
@@ -112,7 +112,7 @@ const Cart = () => {
 
                     {/* Price Desktop */}
                     <div className="hidden md:block col-span-2 text-right">
-                      <p className="font-display font-bold text-lg text-foreground">${item.totalPrice.toFixed(2)}</p>
+                      <p className="font-display font-bold text-lg text-foreground">₹{item.totalPrice.toFixed(2)}</p>
                     </div>
 
                     {/* Remove Action */}
@@ -142,19 +142,19 @@ const Cart = () => {
             <div className="space-y-4 mb-6 text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Subtotal</span>
-                <span className="font-medium text-foreground">${totalAmount.toFixed(2)}</span>
+                <span className="font-medium text-foreground">₹{totalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Shipping</span>
-                <span className="font-medium text-foreground">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                <span className="font-medium text-foreground">{shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}</span>
               </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 pb-4 border-b border-border">
-                <span>Estimated Tax (8%)</span>
-                <span className="font-medium text-foreground">${tax.toFixed(2)}</span>
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                <span>Tax</span>
+                <span className="font-medium text-foreground">₹{tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-lg font-bold text-foreground">
+              <div className="border-t border-border pt-4 flex justify-between text-base font-bold text-foreground">
                 <span>Total</span>
-                <span className="font-display text-primary-600">${grandTotal.toFixed(2)}</span>
+                <span className="text-primary-600 font-display text-xl">₹{grandTotal.toFixed(2)}</span>
               </div>
             </div>
 

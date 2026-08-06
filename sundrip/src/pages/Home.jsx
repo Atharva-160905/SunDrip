@@ -107,7 +107,7 @@ const Trending = () => {
   React.useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/products?pageSize=100`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/products?pageSize=100`);
         const formatted = data.products
           .map(p => ({
             ...p,
@@ -178,7 +178,7 @@ const Trending = () => {
                       <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 capitalize">{product.category}</p>
                     </div>
                     <div className="flex items-center justify-between mt-auto">
-                      <span className="font-display font-bold text-xl">${product.price.toFixed(2)}</span>
+                      <span className="font-display font-bold text-xl">₹{product.price.toFixed(2)}</span>
                       <Button 
                         size="icon" 
                         variant="primary" 

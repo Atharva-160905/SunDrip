@@ -8,12 +8,27 @@ import Input from '../components/Input';
 import { cartActions } from '../store/cartSlice';
 import axios from 'axios';
 
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 const Checkout = () => {
   const { totalAmount, items, totalQuantity } = useSelector(state => state.cart);
   const { userInfo: user } = useSelector(state => state.auth);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
+  const [checkoutError, setCheckoutError] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -22,12 +37,22 @@ const Checkout = () => {
 
   const handleCheckout = async (e) => {
     e.preventDefault();
+    setCheckoutError('');
+
     if (!user) {
       navigate('/login');
       return;
     }
 
     setIsSubmitting(true);
+
+    // Ensure Razorpay SDK script is loaded
+    const isScriptLoaded = await loadRazorpayScript();
+    if (!isScriptLoaded) {
+      setCheckoutError('Razorpay SDK failed to load. Please check your internet connection.');
+      setIsSubmitting(false);
+      return;
+    }
 
     // Extract DOM values synchronously before opening the modal
     const address = {
@@ -38,39 +63,48 @@ const Checkout = () => {
     };
 
     const orderItems = items.map(item => ({
-      productId: item.id,
+      productId: item.productId || item.id || item._id,
       name: item.name,
       image: item.image,
       price: item.price,
       qty: item.quantity,
-      size: item.size
+      size: item.size || 'M'
     }));
     
     try {
-      // 1. Create order on our backend to get Razorpay Order ID
-      const { data: razorpayOrder } = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/payment/create`, {
+      const apiBase = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+      // 1. Create order on our backend to get Razorpay Order ID & key_id
+      const { data: razorpayOrder } = await axios.post(`${apiBase}/api/payment/create`, {
         amount: grandTotal
       }, { headers: { Authorization: `Bearer ${user.token}` } });
 
+      if (!razorpayOrder || !razorpayOrder.id) {
+        throw new Error('Failed to generate payment order from server.');
+      }
+
+      // Determine public key (from backend order response or env variable or fallback)
+      const razorpayKey = razorpayOrder.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SDzc5VAnWVENs1';
+
       // 2. Initialize Razorpay Modal Options
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: grandTotal * 100,
-        currency: 'INR',
+        key: razorpayKey,
+        amount: razorpayOrder.amount, // Exactly matches backend order in paise
+        currency: razorpayOrder.currency || 'INR',
         name: 'Sundrip',
         description: 'Order Payment',
         order_id: razorpayOrder.id,
         handler: async function (response) {
           try {
             // 3. Verify signature on backend
-            await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/payment/verify`, {
+            await axios.post(`${apiBase}/api/payment/verify`, {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             }, { headers: { Authorization: `Bearer ${user.token}` } });
 
             // 4. Save completed order into Database
-            const { data: orderData } = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/orders`, {
+            const { data: orderData } = await axios.post(`${apiBase}/api/orders`, {
               products: orderItems,
               address,
               totalPrice: grandTotal,
@@ -84,33 +118,41 @@ const Checkout = () => {
             dispatch(cartActions.clearCart());
           } catch (verificationError) {
             console.error('Verification failed', verificationError);
-            alert('Payment verification failed!');
+            setCheckoutError(verificationError.response?.data?.message || 'Payment verification failed!');
           } finally {
-            setIsSubmitting(false); // Enable the button again
+            setIsSubmitting(false);
           }
         },
         prefill: {
-          name: user.name,
-          email: user.email,
+          name: (e.target.firstName?.value ? `${e.target.firstName.value} ${e.target.lastName?.value || ''}`.trim() : user.name) || '',
+          email: e.target.email?.value || user.email || '',
+          contact: (e.target.phone?.value || '').replace(/[^\d+]/g, ''),
         },
         theme: {
           color: '#f97316', // Primary Orange Theme
         },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+          }
+        }
       };
 
       // 3. Open Razorpay Modal
       const rzp = new window.Razorpay(options);
       
       rzp.on('payment.failed', function (response){
-        alert(response.error.description);
+        console.error('Payment failed event:', response.error);
+        setCheckoutError(response.error?.description || 'Payment was unsuccessful.');
         setIsSubmitting(false);
       });
 
       rzp.open();
 
     } catch (err) {
-      console.error(err);
-      alert('Checkout initialization failed: ' + (err.response?.data?.message || err.message));
+      console.error('Checkout error:', err);
+      const errMsg = err.response?.data?.message || err.message;
+      setCheckoutError('Checkout initialization failed: ' + errMsg);
       setIsSubmitting(false);
     }
   };
@@ -183,6 +225,7 @@ const Checkout = () => {
         <h1 className="text-4xl font-display font-bold tracking-tight text-foreground">Checkout</h1>
       </div>
 
+
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
         {/* Form Section */}
         <div className="flex-1">
@@ -193,19 +236,19 @@ const Checkout = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-foreground">First Name</label>
-                  <Input type="text" required placeholder="John" />
+                  <Input name="firstName" type="text" required placeholder="John" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-foreground">Last Name</label>
-                  <Input type="text" required placeholder="Doe" />
+                  <Input name="lastName" type="text" required placeholder="Doe" />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-semibold text-foreground">Email Address</label>
-                  <Input type="email" required placeholder="john@example.com" />
+                  <Input name="email" type="email" required placeholder="john@example.com" />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-semibold text-foreground">Phone Number</label>
-                  <Input type="tel" required placeholder="+1 (555) 000-0000" />
+                  <Input name="phone" type="tel" required placeholder="+91 98765 43210" />
                 </div>
               </div>
             </section>
@@ -241,13 +284,19 @@ const Checkout = () => {
 
             {/* Form Section End */}
 
+            {checkoutError && (
+              <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm font-medium">
+                {checkoutError}
+              </div>
+            )}
+
             <Button 
               type="submit" 
               size="lg" 
               className="w-full text-lg shadow-xl shadow-primary-500/20 py-8"
               isLoading={isSubmitting}
             >
-              {isSubmitting ? 'Processing...' : `Pay $${grandTotal.toFixed(2)}`}
+              {isSubmitting ? 'Processing...' : `Pay ₹${grandTotal.toFixed(2)} with Razorpay`}
             </Button>
 
             <div className="flex items-center justify-center space-x-2 text-sm text-slate-500 mt-6">
@@ -273,7 +322,7 @@ const Checkout = () => {
                     <p className="text-xs text-slate-500 mt-1 capitalize">{item.color} | {item.size}</p>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-xs text-slate-500">Qty: {item.quantity}</span>
-                      <span className="font-bold text-sm">${item.totalPrice.toFixed(2)}</span>
+                      <span className="font-bold text-sm">₹{item.totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -283,20 +332,20 @@ const Checkout = () => {
             <div className="space-y-4 pt-6 border-t border-border text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Subtotal ({totalQuantity} items)</span>
-                <span className="font-medium text-foreground">${totalAmount.toFixed(2)}</span>
+                <span className="font-medium text-foreground">₹{totalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Shipping</span>
-                <span className="font-medium text-foreground">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                <span className="font-medium text-foreground">{shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}</span>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Tax</span>
-                <span className="font-medium text-foreground">${(totalAmount * 0.08).toFixed(2)}</span>
+                <span className="font-medium text-foreground">₹{(totalAmount * 0.08).toFixed(2)}</span>
               </div>
               
               <div className="pt-4 border-t border-border flex justify-between items-center text-lg font-bold text-foreground">
                 <span>Total</span>
-                <span className="font-display text-primary-600">${grandTotal.toFixed(2)}</span>
+                <span className="font-display text-primary-600">₹{grandTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

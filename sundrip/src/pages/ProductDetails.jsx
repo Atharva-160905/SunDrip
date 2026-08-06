@@ -116,7 +116,7 @@ const ProductDetails = () => {
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-4">{product.name}</h1>
             <div className="flex items-center space-x-4 mb-6">
-              <span className="text-3xl font-display font-semibold">${product.price.toFixed(2)}</span>
+              <span className="text-3xl font-display font-semibold">₹{product.price.toFixed(2)}</span>
               <div className="flex items-center text-yellow-500">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} className="w-5 h-5 fill-current" />
