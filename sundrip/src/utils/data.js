@@ -1,75 +1,117 @@
 export const mockProducts = [
   {
     id: '1',
-    name: 'Oversized Palm T-Shirt',
-    price: 35.00,
-    category: 'tshirts',
-    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=800&auto=format&fit=crop',
-    colors: ['White', 'Black'],
-    sizes: ['S', 'M', 'L', 'XL'],
-    description: 'Premium heavyweight cotton oversized t-shirt with subtle palm embroidery. Perfect for the beach or the street.',
+    name: 'Iron Forge Heavyweight Oversized Tee',
+    price: 1499.00,
+    category: 'T-Shirts',
+    image: '/categories/tshirts.png',
+    colors: ['Washed Charcoal', 'Pitch Black'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    description: 'Heavyweight 100% combed cotton with exaggerated drop-shoulder cut. Engineered for the ultimate pump cover aesthetic.',
     isTrending: true
   },
   {
     id: '2',
-    name: 'Sunset Fade Tank Top',
-    price: 28.00,
-    category: 'sleeveless',
-    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=800&auto=format&fit=crop',
-    colors: ['Orange Gradient', 'Blue Gradient'],
+    name: 'Tactical Iron Cargo Joggers',
+    price: 1999.00,
+    category: 'Joggers',
+    image: '/categories/joggers.png',
+    colors: ['Matte Black', 'Gunmetal Grey'],
     sizes: ['M', 'L', 'XL'],
-    description: 'Breathable sleeveless gym wear that transitions perfectly into casual summer daywear with our signature soft gradient.',
+    description: 'Heavyweight french terry with deep utility zipper pockets, reinforced knee articulation, and custom cuff tapering.',
     isTrending: true
   },
   {
     id: '3',
-    name: 'Utility Cargo Shorts',
-    price: 45.00,
-    category: 'shorts',
-    image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=800&auto=format&fit=crop',
-    colors: ['Khaki', 'Olive', 'Charcoal'],
-    sizes: ['28', '30', '32', '34'],
-    description: 'Lightweight nylon cargo shorts. Water-resistant and quick-drying, making them the ultimate summer essential.',
+    name: 'Shadow Core Compression Longsleeve',
+    price: 1299.00,
+    category: 'Gym Wear',
+    image: '/categories/gym-wear.png',
+    colors: ['Onyx Black', 'Carbon Slate'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    description: 'High-density 4-way stretch compression with anti-microbial sweat dispersion and muscle contouring paneling.',
     isTrending: true
   },
   {
     id: '4',
-    name: 'Neon Drip Boardshorts',
-    price: 40.00,
-    category: 'shorts',
-    image: 'https://images.unsplash.com/photo-1597843793010-0aee8971fce8?q=80&w=800&auto=format&fit=crop',
-    colors: ['Neon Coral', 'Cyan'],
-    sizes: ['30', '32', '34'],
-    description: '4-way stretch boardshorts with a vibrant neon pop. Designed to stand out.',
-    isTrending: false
-  },
-  {
-    id: '5',
-    name: 'Minimal Logo Combo Set',
-    price: 65.00,
-    category: 'combos',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop',
-    colors: ['Off-White', 'Black'],
-    sizes: ['M', 'L', 'XL'],
-    description: 'A matching oversized tee and short set in premium french terry cotton.',
+    name: 'Relentless Acid-Wash Boxy Hoodie',
+    price: 2499.00,
+    category: 'Merch',
+    image: '/categories/merch.png',
+    colors: ['Mineral Black', 'Smoked Olive'],
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    description: 'Custom-milled heavyweight fleece with double-lined raw edge hood and oversized boxy drape.',
     isTrending: true
   },
   {
+    id: '5',
+    name: 'Barbell Club Graphic Heavy Tee',
+    price: 1399.00,
+    category: 'T-Shirts',
+    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=800&auto=format&fit=crop',
+    colors: ['Vintage Black', 'Chalk Off-White'],
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    description: 'Distressed vintage wash with subtle cracked-ink typography on back and chest emblem.',
+    isTrending: false
+  },
+  {
     id: '6',
-    name: 'Vintage Wash Cutoff',
-    price: 25.00,
-    category: 'sleeveless',
+    name: 'Raw-Hem Training Tank',
+    price: 1199.00,
+    category: 'Gym Wear',
     image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=800&auto=format&fit=crop',
-    colors: ['Washed Black', 'Vintage Grey'],
-    sizes: ['S', 'M', 'L'],
-    description: 'Raw hem cutoff tee with a worn-in vintage wash. Supremely soft.',
+    colors: ['Pitch Black', 'Iron Grey'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    description: 'Deep drop-armhole gym tank designed for unrestricted shoulder mobility and lat clearance.',
+    isTrending: true
+  },
+  {
+    id: '7',
+    name: 'Heavy Fleece Cuffed Joggers',
+    price: 1899.00,
+    category: 'Joggers',
+    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop',
+    colors: ['Charcoal', 'Black'],
+    sizes: ['M', 'L', 'XL'],
+    description: 'Ultra-soft fleece with tailored ribbed cuffs and thick drawcord waistband.',
+    isTrending: false
+  },
+  {
+    id: '8',
+    name: 'SunDrip Structured Iron Cap',
+    price: 899.00,
+    category: 'Merch',
+    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=800&auto=format&fit=crop',
+    colors: ['Matte Black'],
+    sizes: ['One Size'],
+    description: 'Low-profile structured 6-panel athletic cap with subtle embroidered monogram.',
     isTrending: false
   }
 ];
 
 export const categories = [
-  { id: 'tshirts', name: 'T-Shirts', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600&auto=format&fit=crop' },
-  { id: 'sleeveless', name: 'Sleeveless', image: 'https://images.unsplash.com/photo-1503342394128-c104d54dba01?q=80&w=600&auto=format&fit=crop' },
-  { id: 'shorts', name: 'Shorts', image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=600&auto=format&fit=crop' },
-  { id: 'combos', name: 'Combos', image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop' }
+  { 
+    id: 'tshirts', 
+    name: 'T-SHIRTS', 
+    slug: 'T-Shirts',
+    image: '/categories/tshirts.png' 
+  },
+  { 
+    id: 'joggers', 
+    name: 'JOGGERS', 
+    slug: 'Joggers',
+    image: '/categories/joggers.png' 
+  },
+  { 
+    id: 'gym-wear', 
+    name: 'GYM WEAR', 
+    slug: 'Gym Wear',
+    image: '/categories/gym-wear.png' 
+  },
+  { 
+    id: 'merch', 
+    name: 'MERCH', 
+    slug: 'Merch',
+    image: '/categories/merch.png' 
+  }
 ];

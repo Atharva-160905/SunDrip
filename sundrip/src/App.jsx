@@ -6,6 +6,8 @@ import axios from 'axios';
 import { cartActions } from './store/cartSlice';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+import useSmoothScroll from './hooks/useSmoothScroll';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
@@ -16,6 +18,7 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 
 function App() {
+  useSmoothScroll();
   const location = useLocation();
   const dispatch = useDispatch();
   const { userInfo: user } = useSelector((state) => state.auth);
@@ -24,7 +27,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/cart`, { 
+      axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/cart`, { 
         headers: { Authorization: `Bearer ${user.token}` } 
       })
       .then(res => {
@@ -44,7 +47,7 @@ function App() {
     const syncCart = async () => {
       if (user && isCartInitialized) {
         try {
-          await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5000"}`}/api/cart/sync`, 
+          await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/cart/sync`, 
             { items }, 
             { headers: { Authorization: `Bearer ${user.token}` } }
           );
@@ -60,11 +63,13 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <ScrollToTop />
       <Navbar />
-      <main className="flex-grow pt-24">
+      <main className="flex-grow">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Shop />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />

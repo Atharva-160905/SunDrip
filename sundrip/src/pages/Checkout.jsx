@@ -32,8 +32,10 @@ const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const shipping = totalAmount > 100 ? 0 : 15;
-  const grandTotal = totalAmount > 0 ? totalAmount + shipping + (totalAmount * 0.08) : 0;
+  const freeShippingThreshold = 999;
+  const shipping = totalAmount >= freeShippingThreshold || totalAmount === 0 ? 0 : 99;
+  const tax = totalAmount > 0 ? Math.round(totalAmount * 0.05) : 0;
+  const grandTotal = totalAmount > 0 ? totalAmount + shipping + tax : 0;
 
   const handleCheckout = async (e) => {
     e.preventDefault();
@@ -129,7 +131,7 @@ const Checkout = () => {
           contact: (e.target.phone?.value || '').replace(/[^\d+]/g, ''),
         },
         theme: {
-          color: '#f97316', // Primary Orange Theme
+          color: '#ff4d00', // Molten Ember Theme
         },
         modal: {
           ondismiss: function () {
@@ -186,7 +188,7 @@ const Checkout = () => {
         <p className="text-slate-600 dark:text-slate-400 max-w-lg mb-8 text-lg font-medium">
           Thank you for choosing Sundrip. Your order <span className="text-primary-600 font-bold">#{orderDetails._id.slice(-6).toUpperCase()}</span> is currently being processed. We will send you an email confirmation shortly.
         </p>
-        <Link to="/shop">
+        <Link to="/products">
           <Button size="lg" className="rounded-full px-10 text-lg shadow-xl shadow-primary-500/20">
             Continue Shopping
           </Button>
@@ -200,7 +202,7 @@ const Checkout = () => {
       <div className="container mx-auto px-4 py-20 min-h-[60vh] flex flex-col items-center justify-center text-center">
         <h2 className="text-3xl font-display font-bold mb-4">Your bag is empty</h2>
         <p className="text-slate-500 mb-8">You need items in your cart to checkout.</p>
-        <Link to="/shop">
+        <Link to="/products">
           <Button size="lg" className="rounded-full px-10">Return to Shop</Button>
         </Link>
       </div>
@@ -293,7 +295,7 @@ const Checkout = () => {
             <Button 
               type="submit" 
               size="lg" 
-              className="w-full text-lg shadow-xl shadow-primary-500/20 py-8"
+              className="w-full text-base font-semibold py-5"
               isLoading={isSubmitting}
             >
               {isSubmitting ? 'Processing...' : `Pay ₹${grandTotal.toFixed(2)} with Razorpay`}
@@ -319,7 +321,7 @@ const Checkout = () => {
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
                     <h4 className="font-semibold text-sm line-clamp-1">{item.name}</h4>
-                    <p className="text-xs text-slate-500 mt-1 capitalize">{item.color} | {item.size}</p>
+                    <p className="text-xs text-slate-500 mt-1 uppercase">Size: {item.size}</p>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-xs text-slate-500">Qty: {item.quantity}</span>
                       <span className="font-bold text-sm">₹{item.totalPrice.toFixed(2)}</span>
@@ -340,7 +342,7 @@ const Checkout = () => {
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Tax</span>
-                <span className="font-medium text-foreground">₹{(totalAmount * 0.08).toFixed(2)}</span>
+                <span className="font-medium text-foreground">₹{tax.toFixed(2)}</span>
               </div>
               
               <div className="pt-4 border-t border-border flex justify-between items-center text-lg font-bold text-foreground">

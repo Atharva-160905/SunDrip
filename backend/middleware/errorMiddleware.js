@@ -13,6 +13,11 @@ const errorHandler = (err, req, res, next) => {
     message = 'Resource not found';
   }
 
+  if (err.code === 11000) {
+    statusCode = 400;
+    message = 'An account with this email already exists';
+  }
+
   res.status(statusCode).json({
     message,
     stack: process.env.NODE_ENV === 'production' ? null : err.stack,

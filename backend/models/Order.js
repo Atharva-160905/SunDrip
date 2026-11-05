@@ -42,6 +42,10 @@ const orderSchema = new mongoose.Schema(
       enum: ['processing', 'shipped', 'delivered', 'cancelled'],
       default: 'processing',
     },
+    isStockDeducted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

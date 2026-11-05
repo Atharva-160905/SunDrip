@@ -1,61 +1,98 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-950 text-slate-300 py-12 border-t border-slate-800">
-      <div className="container mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="text-3xl font-display font-bold tracking-tighter text-white mb-4 block">
-              SUN<span className="text-primary-500">DRIP</span>
-            </Link>
-            <p className="text-slate-400 max-w-sm mb-6">
-              Wear the Heat. The ultimate modern, Gen-Z summer collection. Keep it aesthetic, keep it minimal, keep it drip.
+    <footer className="bg-[#050507] text-zinc-400 pt-16 pb-12 border-t border-white/5 relative overflow-hidden">
+      <div className="container mx-auto px-6 max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/5">
+          {/* Brand Column */}
+          <div className="md:col-span-5 space-y-3">
+            <Logo size={28} subtext={true} />
+            <p className="text-xs text-zinc-400 font-normal leading-relaxed max-w-sm mt-3">
+              Heavyweight athletic wear and tailored joggers engineered for performance, comfort, and longevity under the bar.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-500 hover:text-white transition-colors">
-                IG
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-500 hover:text-white transition-colors">
-                X
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-500 hover:text-white transition-colors">
-                FB
-              </a>
-            </div>
           </div>
 
-          {/* Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-lg">Shop</h4>
-            <ul className="space-y-2">
-              <li><Link to="/shop" className="hover:text-primary-400 transition-colors">All Products</Link></li>
-              <li><Link to="/shop?category=tshirts" className="hover:text-primary-400 transition-colors">Oversized T-shirts</Link></li>
-              <li><Link to="/shop?category=sleeveless" className="hover:text-primary-400 transition-colors">Sleeveless</Link></li>
-              <li><Link to="/shop?category=shorts" className="hover:text-primary-400 transition-colors">Summer Shorts</Link></li>
+          {/* Navigation Column: Equipment */}
+          <div className="md:col-span-2 space-y-3">
+            <h4 className="text-xs font-display font-bold tracking-wider text-white uppercase">
+              Categories
+            </h4>
+            <ul className="space-y-2 text-xs text-zinc-400">
+              <li>
+                <Link to="/products?category=t-shirts" className="hover:text-white transition-colors">
+                  T-Shirts
+                </Link>
+              </li>
+              <li>
+                <Link to="/products?category=joggers" className="hover:text-white transition-colors">
+                  Joggers
+                </Link>
+              </li>
+              <li>
+                <Link to="/products?category=gym-wear" className="hover:text-white transition-colors">
+                  Gym Wear
+                </Link>
+              </li>
+              <li>
+                <Link to="/products?category=merch" className="hover:text-white transition-colors">
+                  Merch
+                </Link>
+              </li>
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-lg">Support</h4>
-            <ul className="space-y-2">
-              <li><Link to="#" className="hover:text-primary-400 transition-colors">FAQ</Link></li>
-              <li><Link to="#" className="hover:text-primary-400 transition-colors">Shipping & Returns</Link></li>
-              <li><Link to="#" className="hover:text-primary-400 transition-colors">Contact Us</Link></li>
-              <li><Link to="#" className="hover:text-primary-400 transition-colors">Size Guide</Link></li>
+          {/* Navigation Column: Customer Support */}
+          <div className="md:col-span-2 space-y-3">
+            <h4 className="text-xs font-display font-bold tracking-wider text-white uppercase">
+              Help
+            </h4>
+            <ul className="space-y-2 text-xs text-zinc-400">
+              <li>
+                <Link to="/profile" className="hover:text-white transition-colors">
+                  My Orders
+                </Link>
+              </li>
+              <li>
+                <Link to="/cart" className="hover:text-white transition-colors">
+                  Shopping Bag
+                </Link>
+              </li>
+              <li>
+                <span className="text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer">
+                  Size Guide
+                </span>
+              </li>
+              <li>
+                <span className="text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer">
+                  Shipping & Returns
+                </span>
+              </li>
             </ul>
           </div>
 
+          {/* About Column */}
+          <div className="md:col-span-3 space-y-3">
+            <h4 className="text-xs font-display font-bold tracking-wider text-white uppercase">
+              Our Ethos
+            </h4>
+            <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+              Designed in India with custom combed cotton and reinforced stitching. Built to hold its shape through repeated training sessions and washes.
+            </p>
+          </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Sundrip. All rights reserved.</p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link to="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="#" className="hover:text-white transition-colors">Terms of Service</Link>
+        {/* Bottom Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>
+            &copy; {new Date().getFullYear()} SunDrip. All rights reserved.
+          </p>
+          <div className="flex items-center space-x-6 text-xs text-zinc-400">
+            <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Contact Us</span>
           </div>
         </div>
       </div>

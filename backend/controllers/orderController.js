@@ -1,4 +1,62 @@
 import Order from '../models/Order.js';
+import Product from '../models/Product.js';
+
+// Helper to deduct product stock inventory
+const deductStock = async (products) => {
+  if (!Array.isArray(products)) return;
+  for (const item of products) {
+    const pId = item.productId || item.id || item._id;
+    if (!pId) continue;
+    try {
+      const product = await Product.findById(pId);
+      if (product) {
+        const qtyToDeduct = Number(item.qty) || 1;
+        product.stock = Math.max(0, (Number(product.stock) || 0) - qtyToDeduct);
+
+        // Deduct from size-specific stock if sizes array exists
+        if (item.size && Array.isArray(product.sizes) && product.sizes.length > 0) {
+          const sizeObj = product.sizes.find(
+            (s) => s.size && s.size.toLowerCase() === String(item.size).toLowerCase()
+          );
+          if (sizeObj) {
+            sizeObj.stock = Math.max(0, (Number(sizeObj.stock) || 0) - qtyToDeduct);
+          }
+        }
+        await product.save();
+      }
+    } catch (err) {
+      console.error('Error deducting stock for product', pId, err);
+    }
+  }
+};
+
+// Helper to restore product stock inventory on cancellation
+const restoreStock = async (products) => {
+  if (!Array.isArray(products)) return;
+  for (const item of products) {
+    const pId = item.productId || item.id || item._id;
+    if (!pId) continue;
+    try {
+      const product = await Product.findById(pId);
+      if (product) {
+        const qtyToRestore = Number(item.qty) || 1;
+        product.stock = (Number(product.stock) || 0) + qtyToRestore;
+
+        if (item.size && Array.isArray(product.sizes) && product.sizes.length > 0) {
+          const sizeObj = product.sizes.find(
+            (s) => s.size && s.size.toLowerCase() === String(item.size).toLowerCase()
+          );
+          if (sizeObj) {
+            sizeObj.stock = (Number(sizeObj.stock) || 0) + qtyToRestore;
+          }
+        }
+        await product.save();
+      }
+    } catch (err) {
+      console.error('Error restoring stock for product', pId, err);
+    }
+  }
+};
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -22,9 +80,13 @@ export const addOrderItems = async (req, res, next) => {
         address,
         totalPrice,
         paymentStatus: paymentStatus || 'pending',
+        isStockDeducted: true,
       });
 
       const createdOrder = await order.save();
+
+      // Deduct inventory stock for purchased products
+      await deductStock(products);
 
       res.status(201).json(createdOrder);
     }
@@ -60,6 +122,13 @@ export const updateOrderToPaid = async (req, res, next) => {
 
     if (order) {
       order.paymentStatus = 'completed';
+      
+      // If stock wasn't already deducted, deduct it now
+      if (!order.isStockDeducted) {
+        await deductStock(order.products);
+        order.isStockDeducted = true;
+      }
+
       const updatedOrder = await order.save();
       res.json(updatedOrder);
     } else {
@@ -80,7 +149,19 @@ export const updateOrderStatus = async (req, res, next) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+      const prevStatus = order.orderStatus;
       order.orderStatus = status;
+
+      // If cancelling an order with deducted stock, restore inventory
+      if (status === 'cancelled' && prevStatus !== 'cancelled' && order.isStockDeducted) {
+        await restoreStock(order.products);
+        order.isStockDeducted = false;
+      } else if (status !== 'cancelled' && prevStatus === 'cancelled' && !order.isStockDeducted) {
+        // If un-cancelling, re-deduct
+        await deductStock(order.products);
+        order.isStockDeducted = true;
+      }
+
       const updatedOrder = await order.save();
       res.json(updatedOrder);
     } else {

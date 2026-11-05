@@ -20,49 +20,74 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  if (loading) return <h2>Loading users...</h2>;
+  if (loading) {
+    return (
+      <div style={{ padding: '40px', color: '#71717a', fontSize: '14px' }}>
+        Loading users...
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="admin-header">
-        <h1>Users Management</h1>
+        <div>
+          <h1>Customers & Roles</h1>
+          <p>Registered customer profiles and administrator permissions.</p>
+        </div>
       </div>
+
       <div className="admin-table-container">
         <table className="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>ROLE</th>
-              <th>JOINED</th>
+              <th>User ID</th>
+              <th>Full Name</th>
+              <th>Email Address</th>
+              <th>Role</th>
+              <th>Registration Date</th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => (
               <tr key={u._id}>
-                <td style={{ fontWeight: 600, color: '#64748b' }}>#{u._id.slice(-6).toUpperCase()}</td>
-                <td style={{ fontWeight: 500, color: '#0f172a' }}>{u.name}</td>
-                <td style={{ color: '#475569' }}>{u.email}</td>
+                <td style={{ fontFamily: 'monospace', color: '#a1a1aa', fontSize: '12px' }}>
+                  #{u._id.slice(-6).toUpperCase()}
+                </td>
+                <td style={{ fontWeight: 500, color: '#f4f4f5' }}>{u.name}</td>
+                <td style={{ color: '#8e94a0' }}>{u.email}</td>
                 <td>
-                  <span style={{ 
-                    background: u.role === 'admin' ? '#fef08a' : '#f1f5f9', 
-                    padding: '4px 8px', 
-                    borderRadius: '12px', 
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold',
-                    color: u.role === 'admin' ? '#854d0e' : '#475569',
-                    border: `1px solid ${u.role === 'admin' ? '#fde047' : '#e2e8f0'}`
-                  }}>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      backgroundColor:
+                        u.role === 'admin'
+                          ? '#1e2029'
+                          : '#14151c',
+                      color: u.role === 'admin' ? '#ffffff' : '#8e94a0',
+                      border:
+                        u.role === 'admin'
+                          ? '1px solid #323544'
+                          : '1px solid #22242e',
+                    }}
+                  >
                     {u.role.toUpperCase()}
                   </span>
                 </td>
-                <td style={{ color: '#475569' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                <td style={{ color: '#71717a', fontSize: '12.5px' }}>
+                  {new Date(u.createdAt).toLocaleDateString()}
+                </td>
               </tr>
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>No users found.</td>
+                <td colSpan="5" style={{ textAlign: 'center', padding: '48px', color: '#71717a' }}>
+                  No customer accounts registered yet.
+                </td>
               </tr>
             )}
           </tbody>

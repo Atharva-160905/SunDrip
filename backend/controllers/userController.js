@@ -7,8 +7,9 @@ import generateToken from '../utils/generateToken.js';
 export const authUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email ? email.toLowerCase().trim() : '';
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(res, user._id);
@@ -36,16 +37,22 @@ export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    const userExists = await User.findOne({ email });
+    if (!name || !email || !password) {
+      res.status(400);
+      throw new Error('Please provide name, email, and password');
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const userExists = await User.findOne({ email: normalizedEmail });
 
     if (userExists) {
       res.status(400);
-      throw new Error('User already exists');
+      throw new Error('An account with this email already exists. Please sign in instead.');
     }
 
     const user = await User.create({
-      name,
-      email,
+      name: name.trim(),
+      email: normalizedEmail,
       password,
     });
 
@@ -64,6 +71,7 @@ export const registerUser = async (req, res, next) => {
       throw new Error('Invalid user data');
     }
   } catch (error) {
+    console.error('Registration error:', error.message);
     next(error);
   }
 };

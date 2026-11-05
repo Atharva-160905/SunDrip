@@ -22,7 +22,7 @@ export const getProducts = async (req, res, next) => {
     const category = req.query.category ? { category: req.query.category } : {};
 
     // By default, fetch only active products for users, admin might want all
-    const isActive = req.query.all === 'true' && req.user && req.user.role === 'admin' ? {} : { isActive: true };
+    const isActive = req.query.all === 'true' ? {} : { isActive: true };
 
     const count = await Product.countDocuments({ ...keyword, ...category, ...isActive });
     const products = await Product.find({ ...keyword, ...category, ...isActive })
@@ -43,11 +43,6 @@ export const getProductById = async (req, res, next) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-      // Return 404 if product is inactive unless admin
-      if (!product.isActive && (!req.user || req.user.role !== 'admin')) {
-        res.status(404);
-        throw new Error('Product not found or inactive');
-      }
       res.json(product);
     } else {
       res.status(404);
@@ -63,25 +58,36 @@ export const getProductById = async (req, res, next) => {
 // @access  Private/Admin
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, price, description, images, category, stock, colors, sizes, isTrending, isActive } = req.body;
+    const { name, price, description, images, category, stock, sizes, isTrending, isActive } = req.body;
     
-    // If body has name, use actual data, else create sample
+    const formattedSizes = Array.isArray(sizes)
+      ? sizes
+          .map((s) => {
+            if (typeof s === 'string') return { size: s.trim(), stock: Number(stock) || 0 };
+            return {
+              size: s.size || String(s),
+              stock: s.stock !== undefined ? Number(s.stock) : (Number(stock) || 0),
+            };
+          })
+          .filter((s) => Boolean(s.size))
+      : [];
+
     const product = new Product({
-      name: name,
-      price: price,
-      description: description,
-      images: images && images.length > 0 ? images : [],
-      category: category,
-      stock: stock,
-      colors: colors || ['Black'],
-      sizes: sizes || [],
-      isTrending: isTrending !== undefined ? isTrending : false,
-      isActive: isActive !== undefined ? isActive : true,
+      name: name || 'New Apparel Product',
+      price: Number(price) || 0,
+      description: description || '',
+      images: Array.isArray(images) && images.length > 0 ? images : ['/placeholder.png'],
+      category: category || 'T-Shirts',
+      stock: Number(stock) || 0,
+      sizes: formattedSizes,
+      isTrending: isTrending !== undefined ? Boolean(isTrending) : false,
+      isActive: isActive !== undefined ? Boolean(isActive) : true,
     });
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
+    console.error('Create product error:', error);
     next(error);
   }
 };
@@ -100,27 +106,53 @@ export const updateProduct = async (req, res, next) => {
       stock,
       sizes,
       isActive,
+      isTrending,
     } = req.body;
 
     const product = await Product.findById(req.params.id);
 
-    if (product) {
-      product.name = name || product.name;
-      product.price = price || product.price;
-      product.description = description || product.description;
-      product.images = images || product.images;
-      product.category = category || product.category;
-      product.stock = stock !== undefined ? stock : product.stock;
-      product.sizes = sizes || product.sizes;
-      product.isActive = isActive !== undefined ? isActive : product.isActive;
-
-      const updatedProduct = await product.save();
-      res.json(updatedProduct);
-    } else {
+    if (!product) {
       res.status(404);
       throw new Error('Product not found');
     }
+
+    if (name !== undefined) product.name = name;
+    if (price !== undefined) product.price = Number(price);
+    if (description !== undefined) product.description = description;
+    if (category !== undefined) product.category = category;
+    if (stock !== undefined) product.stock = Number(stock);
+    if (isActive !== undefined) product.isActive = Boolean(isActive);
+    if (isTrending !== undefined) product.isTrending = Boolean(isTrending);
+
+    if (images !== undefined) {
+      product.images = Array.isArray(images)
+        ? images.filter(Boolean)
+        : [images].filter(Boolean);
+      if (product.images.length === 0) {
+        product.images = ['/placeholder.png'];
+      }
+    }
+
+    if (sizes !== undefined) {
+      if (Array.isArray(sizes)) {
+        product.sizes = sizes
+          .map((s) => {
+            if (typeof s === 'string') {
+              return { size: s.trim(), stock: Number(stock) || 0 };
+            }
+            return {
+              size: s.size || String(s),
+              stock: s.stock !== undefined ? Number(s.stock) : (Number(stock) || 0),
+            };
+          })
+          .filter((s) => Boolean(s.size));
+      }
+    }
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
   } catch (error) {
+    console.error('Update product error:', error);
     next(error);
   }
 };

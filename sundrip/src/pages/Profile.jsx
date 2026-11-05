@@ -219,7 +219,7 @@ const Profile = () => {
                 <Package className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-4" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">No orders yet</h3>
                 <p className="text-slate-500 max-w-sm mx-auto mb-6">Looks like you haven't made your first purchase. Discover our exclusive drops.</p>
-                <Link to="/shop">
+                <Link to="/products">
                   <Button variant="outline" className="rounded-full px-8">Browse Shop</Button>
                 </Link>
               </div>

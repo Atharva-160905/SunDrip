@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const configSchema = new mongoose.Schema({
   size: { type: String, required: true },
-  stock: { type: Number, required: true, default: 0 }
+  stock: { type: Number, default: 0 }
 });
 
 const productSchema = new mongoose.Schema(
@@ -29,7 +29,7 @@ const productSchema = new mongoose.Schema(
     },
     colors: {
       type: [String],
-      default: ['Black'],
+      default: [],
     },
     sizes: [configSchema],
     stock: {
