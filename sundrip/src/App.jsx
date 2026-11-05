@@ -7,7 +7,6 @@ import { cartActions } from './store/cartSlice';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import useSmoothScroll from './hooks/useSmoothScroll';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
@@ -18,7 +17,6 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 
 function App() {
-  useSmoothScroll();
   const location = useLocation();
   const dispatch = useDispatch();
   const { userInfo: user } = useSelector((state) => state.auth);

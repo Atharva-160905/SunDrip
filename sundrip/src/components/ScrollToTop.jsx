@@ -5,7 +5,6 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // If there's an anchor hash (e.g. #categories), let the anchor or scroll spy handle it
     if (hash) {
       const element = document.querySelector(hash);
       if (element) {
@@ -14,16 +13,11 @@ const ScrollToTop = () => {
       }
     }
 
-    // Otherwise smoothly scroll to top on page navigation
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth',
-    });
+    // Instant top on new page navigation so there's zero scroll lag
+    window.scrollTo(0, 0);
   }, [pathname, hash]);
 
   return null;
 };
 
 export default ScrollToTop;
-
