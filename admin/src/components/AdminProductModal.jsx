@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, UploadCloud } from 'lucide-react';
 import api from '../utils/api';
+import { resolveImageUrl } from '../utils/image';
 
 export const PRODUCT_CATEGORIES = ['T-Shirts', 'Joggers', 'Gym Wear', 'Merch'];
 
@@ -213,7 +214,7 @@ const AdminProductModal = ({ isOpen, onClose, product, onSave }) => {
             
             <div className="admin-form-row">
               <div className="admin-form-group">
-                <label>Price (₹)</label>
+                <label>Price (â‚¹)</label>
                 <input 
                   required 
                   type="number" 
@@ -372,7 +373,7 @@ const AdminProductModal = ({ isOpen, onClose, product, onSave }) => {
                       }}
                     >
                       <img 
-                        src={url} 
+                        src={resolveImageUrl(url)} 
                         alt={`Preview ${idx + 1}`} 
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         onError={(e) => { e.target.src = '/placeholder.png'; }}

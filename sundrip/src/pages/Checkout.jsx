@@ -6,6 +6,7 @@ import { CheckCircle2, ShieldCheck, ArrowLeft } from 'lucide-react';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { cartActions } from '../store/cartSlice';
+import { resolveImageUrl } from '../utils/image';
 import axios from 'axios';
 
 const loadRazorpayScript = () => {
@@ -298,7 +299,7 @@ const Checkout = () => {
               className="w-full text-base font-semibold py-5"
               isLoading={isSubmitting}
             >
-              {isSubmitting ? 'Processing...' : `Pay ₹${grandTotal.toFixed(2)} with Razorpay`}
+              {isSubmitting ? 'Processing...' : `Pay â‚¹${grandTotal.toFixed(2)} with Razorpay`}
             </Button>
 
             <div className="flex items-center justify-center space-x-2 text-sm text-slate-500 mt-6">
@@ -317,14 +318,14 @@ const Checkout = () => {
               {items.map(item => (
                 <div key={`${item.id}-${item.size}`} className="flex gap-4 border-b border-border pb-4 last:border-0">
                   <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <img src={resolveImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
                     <h4 className="font-semibold text-sm line-clamp-1">{item.name}</h4>
                     <p className="text-xs text-slate-500 mt-1 uppercase">Size: {item.size}</p>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-xs text-slate-500">Qty: {item.quantity}</span>
-                      <span className="font-bold text-sm">₹{item.totalPrice.toFixed(2)}</span>
+                      <span className="font-bold text-sm">â‚¹{item.totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -334,20 +335,20 @@ const Checkout = () => {
             <div className="space-y-4 pt-6 border-t border-border text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Subtotal ({totalQuantity} items)</span>
-                <span className="font-medium text-foreground">₹{totalAmount.toFixed(2)}</span>
+                <span className="font-medium text-foreground">â‚¹{totalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Shipping</span>
-                <span className="font-medium text-foreground">{shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}</span>
+                <span className="font-medium text-foreground">{shipping === 0 ? 'Free' : `â‚¹${shipping.toFixed(2)}`}</span>
               </div>
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Tax</span>
-                <span className="font-medium text-foreground">₹{tax.toFixed(2)}</span>
+                <span className="font-medium text-foreground">â‚¹{tax.toFixed(2)}</span>
               </div>
               
               <div className="pt-4 border-t border-border flex justify-between items-center text-lg font-bold text-foreground">
                 <span>Total</span>
-                <span className="font-display text-primary-600">₹{grandTotal.toFixed(2)}</span>
+                <span className="font-display text-primary-600">â‚¹{grandTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

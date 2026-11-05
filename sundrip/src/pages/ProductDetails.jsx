@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Plus, Minus } from 'lucide-react';
 import Button from '../components/Button';
 import { cartActions } from '../store/cartSlice';
 import { mockProducts } from '../utils/data';
+import { resolveImageUrl } from '../utils/image';
 import axios from 'axios';
 
 const ProductDetails = () => {
@@ -25,7 +26,7 @@ const ProductDetails = () => {
         const formatted = {
           ...data,
           id: data._id,
-          image: data.images[0] || '',
+          image: resolveImageUrl(data.images?.[0]),
           sizes: data.sizes?.length ? data.sizes.map(s => typeof s === 'string' ? s : s.size) : ['S', 'M', 'L', 'XL'],
         };
         setProduct(formatted);

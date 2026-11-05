@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { cartActions } from '../store/cartSlice';
 import { mockProducts } from '../utils/data';
+import { resolveImageUrl } from '../utils/image';
 import axios from 'axios';
 
 const CATEGORIES = ['All', 'T-Shirts', 'Joggers', 'Gym Wear', 'Merch'];
@@ -47,7 +48,7 @@ const Shop = () => {
           setProducts(data.products.map(p => ({
             ...p,
             id: p._id,
-            image: p.images[0] || '',
+            image: resolveImageUrl(p.images?.[0]),
             sizes: p.sizes?.length ? p.sizes.map(s => s.size) : ['M', 'L', 'XL'],
             colors: p.colors || ['Black']
           })));

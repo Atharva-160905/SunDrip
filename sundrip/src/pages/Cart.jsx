@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react';
 import Button from '../components/Button';
 import { cartActions } from '../store/cartSlice';
+import { resolveImageUrl } from '../utils/image';
 
 const Cart = () => {
   const { items, totalAmount, totalQuantity } = useSelector(state => state.cart);
@@ -56,7 +57,7 @@ const Cart = () => {
                   className="flex gap-4 p-4 rounded-xl bg-card border border-border items-center justify-between"
                 >
                   <div className="w-20 h-24 rounded-lg overflow-hidden bg-zinc-900 border border-border flex-shrink-0">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <img src={resolveImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover" />
                   </div>
 
                   <div className="flex-1 min-w-0">

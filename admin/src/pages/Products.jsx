@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Edit3, Trash2, Plus, Search, Layers } from 'lucide-react';
 import api from '../utils/api';
+import { resolveImageUrl } from '../utils/image';
 import AdminProductModal, { PRODUCT_CATEGORIES } from '../components/AdminProductModal';
 
 const Products = () => {
@@ -201,7 +202,7 @@ const Products = () => {
               <tr key={p._id}>
                 <td>
                   <img
-                    src={p.images?.[0] || '/placeholder.png'}
+                    src={resolveImageUrl(p.images?.[0])}
                     alt={p.name}
                     style={{
                       width: '38px',
@@ -219,7 +220,7 @@ const Products = () => {
                     {p.sizes?.length ? `${p.sizes.length} sizes configured` : 'Standard sizing'}
                   </div>
                 </td>
-                <td style={{ fontWeight: 600, color: '#f4f4f5', fontSize: '13.5px' }}>₹{p.price}</td>
+                <td style={{ fontWeight: 600, color: '#f4f4f5', fontSize: '13.5px' }}>â‚¹{p.price}</td>
                 <td>
                   <span
                     style={{
