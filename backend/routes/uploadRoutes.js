@@ -69,11 +69,8 @@ router.post('/', upload.single('image'), async (req, res) => {
         uploadStream.end(req.file.buffer);
       });
 
-      // Timeout after 6 seconds if remote network is slow or unreachable
-      const result = await Promise.race([
-        uploadPromise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Cloudinary connection timeout')), 6000)),
-      ]);
+      // Await Cloudinary upload directly
+      const result = await uploadPromise;
 
       if (result && (result.secure_url || result.url)) {
         return res.json({
