@@ -8,6 +8,20 @@ import axios from 'axios';
 
 const CATEGORIES = ['All', 'T-Shirts', 'Joggers', 'Gym Wear', 'Merch'];
 
+// Normalizes strings by stripping hyphens, underscores, spaces and lowercasing
+const normalizeCategory = (cat) => {
+  if (!cat) return '';
+  return String(cat).toLowerCase().replace(/[-_\s]+/g, '');
+};
+
+// Returns the canonical category string from CATEGORIES based on any query param or slug
+const getMatchedCategory = (param) => {
+  if (!param) return 'All';
+  const target = normalizeCategory(param);
+  const found = CATEGORIES.find(c => normalizeCategory(c) === target);
+  return found || 'All';
+};
+
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
@@ -16,16 +30,12 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [addedId, setAddedId] = useState(null);
   const [priceSort, setPriceSort] = useState('default');
-  const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
+  const [selectedCategory, setSelectedCategory] = useState(() => getMatchedCategory(categoryParam));
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (categoryParam) {
-      // Find matching category case-insensitively
-      const match = CATEGORIES.find(c => c.toLowerCase() === categoryParam.toLowerCase().replace('-', ' '));
-      if (match) setSelectedCategory(match);
-    }
+    setSelectedCategory(getMatchedCategory(categoryParam));
   }, [categoryParam]);
 
   const handleAddToCart = (e, product) => {
@@ -69,13 +79,13 @@ const Shop = () => {
     if (category === 'All') {
       setSearchParams({});
     } else {
-      setSearchParams({ category: category.toLowerCase().replace(' ', '-') });
+      setSearchParams({ category: category.toLowerCase().replace(/\s+/g, '-') });
     }
   };
 
   let filteredProducts = products.filter(product => {
     if (selectedCategory === 'All') return true;
-    return product.category?.toLowerCase() === selectedCategory.toLowerCase();
+    return normalizeCategory(product.category) === normalizeCategory(selectedCategory);
   });
 
   if (priceSort === 'low') {
@@ -113,19 +123,22 @@ const Shop = () => {
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2 mb-10">
-          {CATEGORIES.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryChange(category)}
-              className={`px-4 py-2 rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                selectedCategory === category
-                  ? 'bg-white text-black shadow-lg shadow-white/20'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+          {CATEGORIES.map((category) => {
+            const isSelected = normalizeCategory(selectedCategory) === normalizeCategory(category);
+            return (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`px-4 py-2 rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-white text-black shadow-lg shadow-white/20'
+                    : 'bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                }`}
+              >
+                {category}
+              </button>
+            );
+          })}
         </div>
 
         {/* Product Grid */}
@@ -156,7 +169,7 @@ const Shop = () => {
                     </h3>
                     <div className="flex items-center justify-between pt-0.5">
                       <p className="font-bold text-sm text-white font-mono">
-                        ₹{Number(product.price).toFixed(2)}
+                        â‚¹{Number(product.price).toFixed(2)}
                       </p>
                       <button 
                         onClick={(e) => handleAddToCart(e, product)}

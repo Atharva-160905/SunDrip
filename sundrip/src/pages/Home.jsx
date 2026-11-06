@@ -66,7 +66,7 @@ const CategoriesSection = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {categories.map((cat) => (
             <Link 
-              to={`/products?category=${cat.slug.toLowerCase().replace(' ', '-')}`} 
+              to={`/products?category=${cat.slug.toLowerCase().replace(/\s+/g, '-')}`} 
               key={cat.id}
               className="group flex flex-col items-center text-center cursor-pointer select-none"
             >
